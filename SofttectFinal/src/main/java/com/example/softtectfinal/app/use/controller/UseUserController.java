@@ -3,37 +3,32 @@ package com.example.softtectfinal.app.use.controller;
 import com.example.softtectfinal.app.use.dto.UseUserDto;
 import com.example.softtectfinal.app.use.dto.UseUserSaveRequestDto;
 import com.example.softtectfinal.app.use.dto.UseUserUpdateRequestDto;
-import com.example.softtectfinal.app.use.entity.UseUser;
-import com.example.softtectfinal.app.use.service.UseUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UseUserController {
-    private final UseUserService useUserService;
+    private final CusCustomerService cusCustomerService;
 
-    @Operation(tags = "User Controller", description = "Gets all customer.", summary = "All user")
+    @Operation(tags = "Customer Controller", description = "Gets all customer.", summary = "All customer")
     @GetMapping
     public ResponseEntity findAll(){
 
-        List<UseUserDto> cusCustomerDtoList = useUserService.findAll();
+        List<CusCustomerDto> cusCustomerDtoList = cusCustomerService.findAll();
 
-        return ResponseEntity.ok(RestResponse.of(useUSerDtoList));
+        return ResponseEntity.ok(RestResponse.of(cusCustomerDtoList));
     }
 
-    @Operation(tags = "User Controller")
+    @Operation(tags = "Customer Controller")
     @GetMapping("/{id}")
     public ResponseEntity findById(@PathVariable Long id){
 
-        UseUserDto useUserDto = cusCustomerService.findById(id);
+        CusCustomerDto cusCustomerDto = cusCustomerService.findById(id);
 
-        return ResponseEntity.ok(RestResponse.of(useUserDto));
+        return ResponseEntity.ok(RestResponse.of(cusCustomerDto));
     }
 
     @Operation(
@@ -61,8 +56,8 @@ public class UseUserController {
                                                             "}"
                                             ),
                                             @ExampleObject(
-                                                    name = "new customer",
-                                                    summary = "New Customer Example",
+                                                    name = "new user",
+                                                    summary = "New User Example",
                                                     description = "Complete request with all available fields",
                                                     value = "{\n" +
                                                             "  \"name\": \"ali\",\n" +
@@ -79,24 +74,23 @@ public class UseUserController {
     @PostMapping
     public ResponseEntity save(@RequestBody UseUserSaveRequestDto useUserSaveRequestDto){
 
-        UseUserDto cusCustomerDto = useUserService.save(useUserSaveRequestDto);
+        UseUserDto useUserDto = useUserService.save(useUserSaveRequestDto);
 
         WebMvcLinkBuilder linkGet = WebMvcLinkBuilder.linkTo(
                 WebMvcLinkBuilder.methodOn(
-                        this.getClass()).findById(cusCustomerDto.getId()));
+                        this.getClass()).findById(useUserDto.getId()));
 
         WebMvcLinkBuilder linkDelete = WebMvcLinkBuilder.linkTo(
                 WebMvcLinkBuilder.methodOn(
-                        this.getClass()).delete(cusCustomerDto.getId()));
+                        this.getClass()).delete(useUserDto.getId()));
 
-        EntityModel entityModel = EntityModel.of(cusCustomerDto);
+        EntityModel entityModel = EntityModel.of(useUserDto);
 
         entityModel.add(linkGet.withRel("find-by-id"));
         entityModel.add(linkDelete.withRel("delete"));
 
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(entityModel);
 
-        ProcessHandle RestResponse;
         return ResponseEntity.ok(RestResponse.of(mappingJacksonValue));
     }
 
@@ -109,11 +103,11 @@ public class UseUserController {
         return ResponseEntity.ok(RestResponse.empty());
     }
 
-    @Operation(tags = "User Controller")
+    @Operation(tags = "Customer Controller")
     @PutMapping
     public ResponseEntity update(@RequestBody UseUserUpdateRequestDto useUserUpdateRequestDto){
 
-        UseUserDto useUserDto = useUserService.update(new UseUserUpdateRequestDto());
+        UseUserDto useUserDto = useUserService.update(useUserUpdateRequestDto);
 
         return ResponseEntity.ok(RestResponse.of(useUserDto));
     }
